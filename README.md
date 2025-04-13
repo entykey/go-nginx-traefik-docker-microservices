@@ -234,10 +234,13 @@ CMD ["node", "index.js"]
 
 ### Inspect
 - Access Traefik dashboard: http://localhost:8080
+![](imgs/traefik_dashboard.png)
 
 - Go service API: http://localhost/api/go
+![](imgs/go_service.png)
 
 - NodeJS service API: http://localhost/api/node
+![](imgs/nodejs_service.png)
 
 ### Giải thích cấu hình Traefik
 1. Traefik service**:
