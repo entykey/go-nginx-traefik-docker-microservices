@@ -1,0 +1,50 @@
+
+# version: "3.6"
+# services:
+#   goservice:
+#     build: "."
+#     ports:
+#       - "8080"
+#   nginx:
+#     build: "./nginx"
+#     ports:
+#       - "80:80"
+#     depends_on:
+#       - "goservice"
+
+
+
+services:
+  traefik:
+    image: traefik:v2.2
+    command:
+      - --api.insecure=true
+      - --providers.docker
+      - --entrypoints.web.address=:80
+    ports:
+      - "80:80"
+      - "8080:8080" # Traefik dashboard
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  goservice:
+    build: .
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.goservice.rule=PathPrefix(`/api/go`)"
+      - "traefik.http.services.goservice.loadbalancer.server.port=8080"
+
+  nodeservice:
+    build: ./nodejs
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nodeservice.rule=PathPrefix(`/api/node`)"
+      - "traefik.http.services.nodeservice.loadbalancer.server.port=3000"
+
+  # You can keep nginx if you want, but with Traefik it's not necessary !
+  # nginx:
+  #   build: "./nginx"
+  #   ports:
+  #     - "80:80"
+  #   depends_on:
+  #     - "goservice"
